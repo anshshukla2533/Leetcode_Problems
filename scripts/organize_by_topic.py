@@ -4,14 +4,15 @@ organize_by_topic.py
 
 Scans the repo root for LeetHub/LeetSync problem folders (folders named
 like "1212-sequential-digits"), fetches each problem's topic tags from
-LeetCode's public GraphQL API, and copies the solution files directly
-into a topic folder at the repo root, e.g.:
+LeetCode's public GraphQL API, and MOVES the solution files into a
+single topic folder at the repo root, e.g.:
 
-    Array/1212-sequential-digits.py
     Enumeration/1212-sequential-digits.py
+    Enumeration/README.md   (overwritten per-problem, see note below)
 
-No "topics/" wrapper folder, no per-problem subfolder -- files sit flat
-inside their topic folder, same name as in the original problem folder.
+Each problem is filed under exactly ONE topic (its first/primary tag
+from LeetCode), and the original numbered folder is deleted afterwards
+so there is only ever one copy of each problem's files in the repo.
 
 Designed to run inside a GitHub Action right after LeetHub/LeetSync
 pushes a new solution commit.
@@ -29,9 +30,6 @@ REPO_ROOT = os.getcwd()
 
 # A LeetHub/LeetSync problem folder always starts with the problem's
 # number, e.g. "1212-sequential-digits" or "73-set-matrix-zeroes".
-# Using this pattern (instead of a hardcoded exclude list) means topic
-# folders like "Array/" or "Enumeration/" are automatically skipped when
-# scanning for problems, since they don't match this shape.
 PROBLEM_DIR_PATTERN = re.compile(r"^\d+[-_].+")
 
 GRAPHQL_URL = "https://leetcode.com/graphql"
@@ -50,10 +48,6 @@ query questionData($titleSlug: String!) {
 
 
 def slug_from_folder(folder_name: str) -> str:
-    """
-    Strip the leading numeric id + separator to get the LeetCode titleSlug.
-    "1212-sequential-digits" -> "sequential-digits"
-    """
     match = re.match(r"^\d+[-_](.+)$", folder_name)
     return match.group(1) if match else folder_name
 
@@ -85,12 +79,9 @@ def get_tags(slug: str) -> list[str]:
     return [tag["name"] for tag in question.get("topicTags", [])]
 
 
-def cleanup_old_symlink(tag_dir: str, entry: str) -> None:
-    """Remove leftovers from an older version of this script that used
-    symlinks and a topics/ wrapper folder, if present."""
-    old_symlink_path = os.path.join(tag_dir, entry)
-    if os.path.islink(old_symlink_path):
-        os.unlink(old_symlink_path)
+def cleanup_old_layout() -> None:
+    """Remove leftovers from older versions of this script (a topics/
+    wrapper folder, or stray symlinks at repo root)."""
     old_topics_dir = os.path.join(REPO_ROOT, "topics")
     if os.path.isdir(old_topics_dir):
         shutil.rmtree(old_topics_dir, ignore_errors=True)
@@ -98,6 +89,7 @@ def cleanup_old_symlink(tag_dir: str, entry: str) -> None:
 
 def main() -> bool:
     changed = False
+    cleanup_old_layout()
 
     entries = sorted(
         e for e in os.listdir(REPO_ROOT)
@@ -114,6 +106,9 @@ def main() -> bool:
             time.sleep(0.3)
             continue
 
+        # Only the first/primary tag -- one topic folder per problem.
+        primary_tag = tags[0]
+
         source_dir = os.path.join(REPO_ROOT, entry)
         source_files = [
             f for f in os.listdir(source_dir)
@@ -125,19 +120,19 @@ def main() -> bool:
             time.sleep(0.3)
             continue
 
-        for tag in tags:
-            tag_dir_name = tag.replace(" ", "-")
-            tag_dir = os.path.join(REPO_ROOT, tag_dir_name)
-            os.makedirs(tag_dir, exist_ok=True)
+        tag_dir = os.path.join(REPO_ROOT, primary_tag)
+        os.makedirs(tag_dir, exist_ok=True)
 
-            cleanup_old_symlink(tag_dir, entry)
+        for filename in source_files:
+            src_file = os.path.join(source_dir, filename)
+            dest_file = os.path.join(tag_dir, filename)
+            shutil.copyfile(src_file, dest_file)
+            print(f"  + moved {filename} -> {primary_tag}/")
 
-            for filename in source_files:
-                src_file = os.path.join(source_dir, filename)
-                dest_file = os.path.join(tag_dir, filename)
-                shutil.copyfile(src_file, dest_file)
-                changed = True
-                print(f"  + copied {filename} -> {tag_dir_name}/")
+        # Remove the original numbered folder so there's only one copy
+        # of this problem's files anywhere in the repo.
+        shutil.rmtree(source_dir)
+        changed = True
 
         time.sleep(0.3)  # be polite to LeetCode's API
 
