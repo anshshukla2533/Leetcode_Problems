@@ -1,0 +1,36 @@
+name: Organize LeetCode solutions by topic
+
+on:
+  push:
+    branches: [ main ]   # change to "master" if that's your default branch
+
+jobs:
+  organize:
+    runs-on: ubuntu-latest
+    # skip runs triggered by this workflow's own commits, to avoid an infinite loop
+    if: github.event.head_commit.author.name != 'github-actions[bot]'
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run topic organizer
+        run: python scripts/organize_by_topic.py
+
+      - name: Commit and push topic folders if changed
+        run: |
+          if [ "$(cat .topic_sync_changed)" = "1" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add topics
+            git commit -m "chore: organize solutions by topic [skip ci]"
+            git push
+          else
+            echo "No new topic links needed."
+          fi
