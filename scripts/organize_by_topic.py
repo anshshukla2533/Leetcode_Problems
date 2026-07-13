@@ -52,7 +52,7 @@ def slug_from_folder(folder_name: str) -> str:
     return match.group(1) if match else folder_name
 
 
-def get_tags(slug: str) -> list[str]:
+def get_question_data(slug: str) -> dict:
     payload = json.dumps({"query": QUERY, "variables": {"titleSlug": slug}}).encode()
     req = urllib.request.Request(
         GRAPHQL_URL,
@@ -69,14 +69,17 @@ def get_tags(slug: str) -> list[str]:
             data = json.loads(resp.read())
     except (urllib.error.URLError, TimeoutError) as e:
         print(f"  ! network error for slug '{slug}': {e}")
-        return []
+        return {}
 
     question = data.get("data", {}).get("question")
     if not question:
         print(f"  ! no question data returned for slug '{slug}' (check folder naming)")
-        return []
+        return {}
 
-    return [tag["name"] for tag in question.get("topicTags", [])]
+    return {
+        "title": question.get("title") or slug,
+        "tags": [tag["name"] for tag in question.get("topicTags", [])],
+    }
 
 
 def cleanup_old_layout() -> None:
@@ -89,6 +92,7 @@ def cleanup_old_layout() -> None:
 
 def main() -> bool:
     changed = False
+    processed_titles = []
     cleanup_old_layout()
 
     entries = sorted(
@@ -101,7 +105,8 @@ def main() -> bool:
         slug = slug_from_folder(entry)
         print(f"Checking '{entry}' -> slug '{slug}'")
 
-        tags = get_tags(slug)
+        data = get_question_data(slug)
+        tags = data.get("tags") or []
         if not tags:
             time.sleep(0.3)
             continue
@@ -133,14 +138,28 @@ def main() -> bool:
         # of this problem's files anywhere in the repo.
         shutil.rmtree(source_dir)
         changed = True
+        processed_titles.append(data.get("title", slug))
 
         time.sleep(0.3)  # be polite to LeetCode's API
 
-    return changed
+    return changed, processed_titles
 
 
 if __name__ == "__main__":
-    did_change = main()
+    did_change, titles = main()
     with open(".topic_sync_changed", "w") as f:
         f.write("1" if did_change else "0")
+
+    if titles:
+        if len(titles) == 1:
+            commit_message = f"Added {titles[0]}"
+        else:
+            commit_message = "Added " + ", ".join(titles)
+    else:
+        commit_message = "chore: organize solutions by topic [skip ci]"
+
+    with open(".commit_message.txt", "w") as f:
+        f.write(commit_message)
+
     print("Done. Changes made:", did_change)
+    print("Commit message will be:", commit_message)
