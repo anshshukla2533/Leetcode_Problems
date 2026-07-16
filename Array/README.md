@@ -1,129 +1,48 @@
-<h2><a href="https://leetcode.com/problems/sum-of-gcd-of-formed-pairs">Sum of GCD of Formed Pairs</a></h2> <img src='https://img.shields.io/badge/Difficulty-Medium-orange' alt='Difficulty: Medium' /><hr><p>You are given an integer array <code>nums</code> of length <code>n</code>.</p>
+<h2><a href="https://leetcode.com/problems/merge-sorted-array">Merge Sorted Array</a></h2> <img src='https://img.shields.io/badge/Difficulty-Easy-brightgreen' alt='Difficulty: Easy' /><hr><p>You are given two integer arrays <code>nums1</code> and <code>nums2</code>, sorted in <strong>non-decreasing order</strong>, and two integers <code>m</code> and <code>n</code>, representing the number of elements in <code>nums1</code> and <code>nums2</code> respectively.</p>
 
-<p>Construct an array <code>prefixGcd</code> where for each index <code>i</code>:</p>
+<p><strong>Merge</strong> <code>nums1</code> and <code>nums2</code> into a single array sorted in <strong>non-decreasing order</strong>.</p>
 
-<ul>
-	<li>Let <code>mx<sub>i</sub> = max(nums[0], nums[1], ..., nums[i])</code>.</li>
-	<li><code>prefixGcd[i] = gcd(nums[i], mx<sub>i</sub>)</code>.</li>
-</ul>
+<p>The final sorted array should not be returned by the function, but instead be <em>stored inside the array </em><code>nums1</code>. To accommodate this, <code>nums1</code> has a length of <code>m + n</code>, where the first <code>m</code> elements denote the elements that should be merged, and the last <code>n</code> elements are set to <code>0</code> and should be ignored. <code>nums2</code> has a length of <code>n</code>.</p>
 
-<p>After constructing <code>prefixGcd</code>:</p>
-
-<ul>
-	<li>Sort <code>prefixGcd</code> in <strong>non-decreasing</strong> order.</li>
-	<li>Form pairs by taking the <strong>smallest unpaired</strong> element and the <strong>largest unpaired</strong> element.</li>
-	<li>Repeat this process until no more pairs can be formed.</li>
-	<li>For each formed pair, <strong>compute</strong> the <code>gcd</code> of the two elements.</li>
-	<li>If <code>n</code> is odd, the <strong>middle</strong> element in the <code>prefixGcd</code> array remains <strong>unpaired</strong> and should be ignored.</li>
-</ul>
-
-<p>Return an integer denoting the <strong>sum of the GCD</strong> values of all formed pairs.</p>
-The term <code>gcd(a, b)</code> denotes the <strong>greatest common divisor</strong> of <code>a</code> and <code>b</code>.
 <p>&nbsp;</p>
 <p><strong class="example">Example 1:</strong></p>
 
-<div class="example-block">
-<p><strong>Input:</strong> <span class="example-io">nums = [2,6,4]</span></p>
-
-<p><strong>Output:</strong> <span class="example-io">2</span></p>
-
-<p><strong>Explanation:</strong></p>
-
-<p>Construct <code>prefixGcd</code>:</p>
-
-<table style="border: 1px solid black;">
-	<thead>
-		<tr>
-			<th style="border: 1px solid black;"><code>i</code></th>
-			<th style="border: 1px solid black;"><code>nums[i]</code></th>
-			<th style="border: 1px solid black;"><code>mx<sub>i</sub></code></th>
-			<th style="border: 1px solid black;"><code>prefixGcd[i]</code></th>
-		</tr>
-	</thead>
-	<tbody>
-		<tr>
-			<td style="border: 1px solid black;">0</td>
-			<td style="border: 1px solid black;">2</td>
-			<td style="border: 1px solid black;">2</td>
-			<td style="border: 1px solid black;">2</td>
-		</tr>
-		<tr>
-			<td style="border: 1px solid black;">1</td>
-			<td style="border: 1px solid black;">6</td>
-			<td style="border: 1px solid black;">6</td>
-			<td style="border: 1px solid black;">6</td>
-		</tr>
-		<tr>
-			<td style="border: 1px solid black;">2</td>
-			<td style="border: 1px solid black;">4</td>
-			<td style="border: 1px solid black;">6</td>
-			<td style="border: 1px solid black;">2</td>
-		</tr>
-	</tbody>
-</table>
-
-<p><code>prefixGcd = [2, 6, 2]</code>. After sorting, it forms <code>[2, 2, 6]</code>.</p>
-
-<p>Pair the smallest and largest elements: <code>gcd(2, 6) = 2</code>. The remaining middle element 2 is ignored. Thus, the sum is 2.</p>
-</div>
+<pre>
+<strong>Input:</strong> nums1 = [1,2,3,0,0,0], m = 3, nums2 = [2,5,6], n = 3
+<strong>Output:</strong> [1,2,2,3,5,6]
+<strong>Explanation:</strong> The arrays we are merging are [1,2,3] and [2,5,6].
+The result of the merge is [<u>1</u>,<u>2</u>,2,<u>3</u>,5,6] with the underlined elements coming from nums1.
+</pre>
 
 <p><strong class="example">Example 2:</strong></p>
 
-<div class="example-block">
-<p><strong>Input:</strong> <span class="example-io">nums = [3,6,2,8]</span></p>
+<pre>
+<strong>Input:</strong> nums1 = [1], m = 1, nums2 = [], n = 0
+<strong>Output:</strong> [1]
+<strong>Explanation:</strong> The arrays we are merging are [1] and [].
+The result of the merge is [1].
+</pre>
 
-<p><strong>Output:</strong> <span class="example-io">5</span></p>
+<p><strong class="example">Example 3:</strong></p>
 
-<p><strong>Explanation:</strong></p>
-
-<p>Construct <code>prefixGcd</code>:</p>
-
-<table style="border: 1px solid black;">
-	<thead>
-		<tr>
-			<th style="border: 1px solid black;"><code>i</code></th>
-			<th style="border: 1px solid black;"><code>nums[i]</code></th>
-			<th style="border: 1px solid black;"><code>mx<sub>i</sub></code></th>
-			<th style="border: 1px solid black;"><code>prefixGcd[i]</code></th>
-		</tr>
-	</thead>
-	<tbody>
-		<tr>
-			<td style="border: 1px solid black;">0</td>
-			<td style="border: 1px solid black;">3</td>
-			<td style="border: 1px solid black;">3</td>
-			<td style="border: 1px solid black;">3</td>
-		</tr>
-		<tr>
-			<td style="border: 1px solid black;">1</td>
-			<td style="border: 1px solid black;">6</td>
-			<td style="border: 1px solid black;">6</td>
-			<td style="border: 1px solid black;">6</td>
-		</tr>
-		<tr>
-			<td style="border: 1px solid black;">2</td>
-			<td style="border: 1px solid black;">2</td>
-			<td style="border: 1px solid black;">6</td>
-			<td style="border: 1px solid black;">2</td>
-		</tr>
-		<tr>
-			<td style="border: 1px solid black;">3</td>
-			<td style="border: 1px solid black;">8</td>
-			<td style="border: 1px solid black;">8</td>
-			<td style="border: 1px solid black;">8</td>
-		</tr>
-	</tbody>
-</table>
-
-<p><code>prefixGcd = [3, 6, 2, 8]</code>. After sorting, it forms <code>[2, 3, 6, 8]</code>.</p>
-
-<p>Form pairs: <code>gcd(2, 8) = 2</code> and <code>gcd(3, 6) = 3</code>. Thus, the sum is <code>2 + 3 = 5</code>.</p>
-</div>
+<pre>
+<strong>Input:</strong> nums1 = [0], m = 0, nums2 = [1], n = 1
+<strong>Output:</strong> [1]
+<strong>Explanation:</strong> The arrays we are merging are [] and [1].
+The result of the merge is [1].
+Note that because m = 0, there are no elements in nums1. The 0 is only there to ensure the merge result can fit in nums1.
+</pre>
 
 <p>&nbsp;</p>
 <p><strong>Constraints:</strong></p>
 
 <ul>
-	<li><code>1 &lt;= n == nums.length &lt;= 10<sup>5</sup></code></li>
-	<li><code>1 &lt;= nums[i] &lt;= 10<sup>​​​​​​​9</sup></code></li>
+	<li><code>nums1.length == m + n</code></li>
+	<li><code>nums2.length == n</code></li>
+	<li><code>0 &lt;= m, n &lt;= 200</code></li>
+	<li><code>1 &lt;= m + n &lt;= 200</code></li>
+	<li><code>-10<sup>9</sup> &lt;= nums1[i], nums2[j] &lt;= 10<sup>9</sup></code></li>
 </ul>
+
+<p>&nbsp;</p>
+<p><strong>Follow up: </strong>Can you come up with an algorithm that runs in <code>O(m + n)</code> time?</p>
