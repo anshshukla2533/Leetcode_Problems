@@ -8,7 +8,7 @@ LeetCode's public GraphQL API, and MOVES the solution files into a
 single topic folder at the repo root, e.g.:
 
     Enumeration/1212-sequential-digits.py
-    Enumeration/README.md   (overwritten per-problem, see note below)
+    Enumeration/1212-sequential-digits.md
 
 Each problem is filed under exactly ONE topic (its first/primary tag
 from LeetCode), and the original numbered folder is deleted afterwards
@@ -64,11 +64,22 @@ def get_question_data(slug: str) -> dict:
         },
         method="POST",
     )
+
     try:
         with urllib.request.urlopen(req, timeout=10) as resp:
-            data = json.loads(resp.read())
+            raw = resp.read()
     except (urllib.error.URLError, TimeoutError) as e:
+        # Covers HTTPError (403/429/etc.) and connection-level failures.
         print(f"  ! network error for slug '{slug}': {e}")
+        return {}
+
+    # LeetCode's anti-bot layer sometimes returns a 200 status with an
+    # HTML challenge page instead of JSON (common from CI server IPs
+    # with no session cookie). Never let that crash the whole run.
+    try:
+        data = json.loads(raw)
+    except json.JSONDecodeError:
+        print(f"  ! non-JSON response for slug '{slug}' (likely blocked/rate-limited) — skipping")
         return {}
 
     question = data.get("data", {}).get("question")
@@ -90,7 +101,20 @@ def cleanup_old_layout() -> None:
         shutil.rmtree(old_topics_dir, ignore_errors=True)
 
 
-def main() -> bool:
+def dest_filename_for(filename: str, slug: str) -> str:
+    """
+    LeetHub/LeetSync writes each problem's writeup as a generic
+    'README.md'. Since multiple problems can land in the same topic
+    folder, that generic name would collide and overwrite. Give it a
+    per-problem name instead. Everything else (e.g. '<slug>.cpp')
+    already has a unique name from LeetHub, so it passes through as-is.
+    """
+    if filename.lower() == "readme.md":
+        return f"{slug}.md"
+    return filename
+
+
+def main():
     changed = False
     processed_titles = []
     cleanup_old_layout()
@@ -130,9 +154,10 @@ def main() -> bool:
 
         for filename in source_files:
             src_file = os.path.join(source_dir, filename)
-            dest_file = os.path.join(tag_dir, filename)
+            out_name = dest_filename_for(filename, slug)
+            dest_file = os.path.join(tag_dir, out_name)
             shutil.copyfile(src_file, dest_file)
-            print(f"  + moved {filename} -> {primary_tag}/")
+            print(f"  + moved {filename} -> {primary_tag}/{out_name}")
 
         # Remove the original numbered folder so there's only one copy
         # of this problem's files anywhere in the repo.
