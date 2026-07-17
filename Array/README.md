@@ -1,44 +1,60 @@
-<h2><a href="https://leetcode.com/problems/find-the-duplicate-number">Find the Duplicate Number</a></h2> <img src='https://img.shields.io/badge/Difficulty-Medium-orange' alt='Difficulty: Medium' /><hr><p>Given an array of integers <code>nums</code> containing&nbsp;<code>n + 1</code> integers where each integer is in the range <code>[1, n]</code> inclusive.</p>
+<h2><a href="https://leetcode.com/problems/sorted-gcd-pair-queries">Sorted GCD Pair Queries</a></h2> <img src='https://img.shields.io/badge/Difficulty-Hard-red' alt='Difficulty: Hard' /><hr><p>You are given an integer array <code>nums</code> of length <code>n</code> and an integer array <code>queries</code>.</p>
 
-<p>There is only <strong>one repeated number</strong> in <code>nums</code>, return <em>this&nbsp;repeated&nbsp;number</em>.</p>
+<p>Let <code>gcdPairs</code> denote an array obtained by calculating the <span data-keyword="gcd-function">GCD</span> of all possible pairs <code>(nums[i], nums[j])</code>, where <code>0 &lt;= i &lt; j &lt; n</code>, and then sorting these values in <strong>ascending</strong> order.</p>
 
-<p>You must solve the problem <strong>without</strong> modifying the array <code>nums</code>&nbsp;and using only constant extra space.</p>
+<p>For each query <code>queries[i]</code>, you need to find the element at index <code>queries[i]</code> in <code>gcdPairs</code>.</p>
+
+<p>Return an integer array <code>answer</code>, where <code>answer[i]</code> is the value at <code>gcdPairs[queries[i]]</code> for each query.</p>
+
+<p>The term <code>gcd(a, b)</code> denotes the <strong>greatest common divisor</strong> of <code>a</code> and <code>b</code>.</p>
 
 <p>&nbsp;</p>
 <p><strong class="example">Example 1:</strong></p>
 
-<pre>
-<strong>Input:</strong> nums = [1,3,4,2,2]
-<strong>Output:</strong> 2
-</pre>
+<div class="example-block">
+<p><strong>Input:</strong> <span class="example-io">nums = [2,3,4], queries = [0,2,2]</span></p>
+
+<p><strong>Output:</strong> <span class="example-io">[1,2,2]</span></p>
+
+<p><strong>Explanation:</strong></p>
+
+<p><code>gcdPairs = [gcd(nums[0], nums[1]), gcd(nums[0], nums[2]), gcd(nums[1], nums[2])] = [1, 2, 1]</code>.</p>
+
+<p>After sorting in ascending order, <code>gcdPairs = [1, 1, 2]</code>.</p>
+
+<p>So, the answer is <code>[gcdPairs[queries[0]], gcdPairs[queries[1]], gcdPairs[queries[2]]] = [1, 2, 2]</code>.</p>
+</div>
 
 <p><strong class="example">Example 2:</strong></p>
 
-<pre>
-<strong>Input:</strong> nums = [3,1,3,4,2]
-<strong>Output:</strong> 3
-</pre>
+<div class="example-block">
+<p><strong>Input:</strong> <span class="example-io">nums = [4,4,2,1], queries = [5,3,1,0]</span></p>
+
+<p><strong>Output:</strong> <span class="example-io">[4,2,1,1]</span></p>
+
+<p><strong>Explanation:</strong></p>
+
+<p><code>gcdPairs</code> sorted in ascending order is <code>[1, 1, 1, 2, 2, 4]</code>.</p>
+</div>
 
 <p><strong class="example">Example 3:</strong></p>
 
-<pre>
-<strong>Input:</strong> nums = [3,3,3,3,3]
-<strong>Output:</strong> 3</pre>
+<div class="example-block">
+<p><strong>Input:</strong> <span class="example-io">nums = [2,2], queries = [0,0]</span></p>
+
+<p><strong>Output:</strong> <span class="example-io">[2,2]</span></p>
+
+<p><strong>Explanation:</strong></p>
+
+<p><code>gcdPairs = [2]</code>.</p>
+</div>
 
 <p>&nbsp;</p>
 <p><strong>Constraints:</strong></p>
 
 <ul>
-	<li><code>1 &lt;= n &lt;= 10<sup>5</sup></code></li>
-	<li><code>nums.length == n + 1</code></li>
-	<li><code>1 &lt;= nums[i] &lt;= n</code></li>
-	<li>All the integers in <code>nums</code> appear only <strong>once</strong> except for <strong>precisely one integer</strong> which appears <strong>two or more</strong> times.</li>
-</ul>
-
-<p>&nbsp;</p>
-<p><b>Follow up:</b></p>
-
-<ul>
-	<li>How can we prove that at least one duplicate number must exist in <code>nums</code>?</li>
-	<li>Can you solve the problem in linear runtime complexity?</li>
+	<li><code>2 &lt;= n == nums.length &lt;= 10<sup>5</sup></code></li>
+	<li><code>1 &lt;= nums[i] &lt;= 5 * 10<sup>4</sup></code></li>
+	<li><code>1 &lt;= queries.length &lt;= 10<sup>5</sup></code></li>
+	<li><code>0 &lt;= queries[i] &lt; n * (n - 1) / 2</code></li>
 </ul>
