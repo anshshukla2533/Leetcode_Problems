@@ -1,0 +1,15 @@
+class Solution {
+public:
+    int findGCD(vector<int>& nums) {
+        int minVal = *min_element(nums.begin(), nums.end());
+        int maxVal = *max_element(nums.begin(), nums.end());
+
+        // Euclid's algorithm
+        while (maxVal % minVal != 0) {
+            int temp = maxVal % minVal;
+            maxVal = minVal;
+            minVal = temp;
+        }
+        return minVal;
+    }
+};
