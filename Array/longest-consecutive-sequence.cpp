@@ -24,7 +24,7 @@ public:
                 int curr = num;
                 int len = 1;
 
-                while (curr != INT_MAX && st.count(curr + 1)) {
+                while ( st.count(curr + 1)) {
                     curr++;
                     len++;
                 }
