@@ -11,6 +11,7 @@
 class Solution {
 public:
     ListNode* reverseList(ListNode* head) {
+        /*
         vector<int>arr;
         ListNode* temp=head;
         while(temp){
@@ -26,5 +27,16 @@ public:
             i--;
         }
         return head;
+        */
+        ListNode* cur=head;
+        ListNode* prev=NULL;
+        while(cur){
+            ListNode* next=cur->next;
+            cur->next = prev;
+    
+            prev=cur;
+            cur=next;
+        }
+        return prev;
     }
 };
