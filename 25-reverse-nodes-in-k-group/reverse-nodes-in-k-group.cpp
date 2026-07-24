@@ -19,7 +19,7 @@ public:
         }
         int n=nodes.size();
         if(n == 0)
-    return NULL;
+         return NULL;
         for(int i=0;i+k<=n;i+=k){
             reverse(nodes.begin()+i, nodes.begin()+i+k);
         }
