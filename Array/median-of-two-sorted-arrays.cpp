@@ -7,8 +7,9 @@ public:
       int n=nums1.size();
       int m=nums2.size();
       int k=n+m;
+      int req=k/2;
        
-      while(i<n && j<m){
+      while(i<n && j<m && arr.size()<=req){
         if(nums1[i]<nums2[j]){
             arr.push_back(nums1[i]);
             i++;
@@ -17,14 +18,14 @@ public:
             j++;
         }
       }
-      while(i<n){
+      while(i<n && arr.size()<=req){
         arr.push_back(nums1[i++]);
       }
-      while(j<m){
+      while(j<m && arr.size()<=req){
         arr.push_back(nums2[j++]);
       }
-      if (k&1)return arr[(k)/2];
-      return (arr[k/2]+arr[k/2-1])/2.0;
+      if (k&1)return arr[req];
+      return (arr[req]+arr[req-1])/2.0;
         
     }
 };
