@@ -14,7 +14,7 @@ public:
     int stoneGameVIII(vector<int>& stones) {
         int n=stones.size();
         vector<int>dp(n,INT_MIN);
-        dp[0]=max(0,stones[0]);
+      //  dp[0]=max(0,stones[0]);
         vector<int>prefix(n,0);
         prefix[0]=stones[0];
         for(int i=1;i<n;i++){
