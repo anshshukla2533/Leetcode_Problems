@@ -1,42 +1,50 @@
 class Solution {
 public:
-    string lexGreaterPermutation(string s, string target) {
-        int cnt[26] = {};
-        int mask = 0, bad = 0;
+    string result = "";
 
-        for (char ch : s) cnt[ch - 'a']++;
-        for (char ch : target) cnt[ch - 'a']--;
-
-        for (int c = 0; c < 26; c++) {
-            if (cnt[c] < 0) bad++;
-            else if (cnt[c] > 0) mask |= 1 << c;
+    bool solve(string& curr, vector<int>& count, string& target, int i, bool greater) {
+        if(i == target.length()) {
+            if(greater) {
+                result = curr;
+                return true;
+            }
+            return false;
         }
 
-        for (int i = target.size() - 1; i >= 0; i--) {
-            int cur = target[i] - 'a';
-            cnt[cur]++;
+        for(char ch = 'a'; ch <= 'z'; ch++) {
+            if(count[ch-'a'] == 0)
+                continue;
+            
+            if(greater == false && ch < target[i])
+                continue;
+            
 
-            if (cnt[cur] == 0) bad--;
-            else if (cnt[cur] == 1) mask |= 1 << cur;
+            curr.push_back(ch);
+            count[ch-'a']--;
 
-            if (bad > 0) continue;
+            bool isGreater = greater || ch > target[i];
 
-            int higher = mask >> (cur + 1);
-            if (!higher) continue;
-
-            int next = cur + 1 + __builtin_ctz(higher);
-            cnt[next]--;
-
-            string ans = target.substr(0, i);
-            ans += char('a' + next);
-
-            for (int c = 0; c < 26; c++) {
-                ans.append(cnt[c], char('a' + c));
+            if(solve(curr, count, target, i+1, isGreater)) {
+                return true;
             }
 
-            return ans;
+            curr.pop_back();
+            count[ch-'a']++;
         }
 
-        return "";
+        return false;
+    }
+
+    string lexGreaterPermutation(string s, string target) {
+        vector<int> count(26, 0);
+
+        for(char &ch : s)
+            count[ch-'a']++;
+        
+        string curr;
+
+        solve(curr, count, target, 0, false);
+
+        return result;
     }
 };
