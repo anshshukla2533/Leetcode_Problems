@@ -5,7 +5,7 @@ public:
         int n = haystack.size();
         int m = needle.size();
         
-        for(int i=0;i<n;i++){
+        for(int i=0;i<=n-m;i++){
             int j=0;
             while(j<m && needle[j]==haystack[i+j]){
                 j++;
