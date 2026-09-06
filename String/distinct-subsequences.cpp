@@ -1,26 +1,25 @@
 class Solution {
 public:
-   int  f(int index1,int index2,string s,string t ,vector<vector<int>>&dp){
-    if(index2==0)return 1;
-    if(index1==0)return 0;
-    if(dp[index1][index2]!=-1)return dp[index1][index2];
-    if(s[index1-1]==t[index2-1])return dp[index1][index2]=f(index1-1,index2-1,s,t,dp)+f(index1-1,index2,s,t,dp);
-    return dp[index1][index2]=f(index1-1,index2,s,t,dp);
-   }
+    long long solve(string &s, string &t, int i, int j, vector<vector<long long>> &dp) {
+        int n = s.size();
+        int m = t.size();
+        
+        if (j == m) return 1;
+        if (i == n) return 0;
+        
+        if (dp[i][j] != -1) return dp[i][j];
+        
+        if (s[i] == t[j]) {
+            return dp[i][j] = solve(s, t, i + 1, j + 1, dp) + solve(s, t, i + 1, j, dp);
+        } else {
+            return dp[i][j] = solve(s, t, i + 1, j, dp);
+        }
+    }
+
     int numDistinct(string s, string t) {
-        int n=s.size();
-        int m=t.size();
-        vector<vector<double>>dp(n+1,vector<double>(m+1,0));
-        for(int i=0;i<=n;i++){
-            dp[i][0]=1;
-        }
-       
-        for(int index1=1;index1<=n;index1++){
-            for(int index2=1;index2<=m;index2++){
-                if(s[index1-1]==t[index2-1]) dp[index1][index2]=dp[index1-1][index2-1]+dp[index1-1][index2];
-    else dp[index1][index2]=dp[index1-1][index2];
-            }
-        }
-        return (int)dp[n][m];
+        int n = s.size();
+        int m = t.size();
+        vector<vector<long long>> dp(n + 1, vector<long long>(m + 1, -1));
+        return solve(s, t, 0, 0, dp);
     }
 };
