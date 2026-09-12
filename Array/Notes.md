@@ -1,1 +1,1 @@
-<h2>smallest-missing-multiple-of-k Notes</h2><hr>[ Time taken: 47m 12s ]
+<h2>maximum-score-of-non-overlapping-intervals Notes</h2><hr>[ Time taken: 2hrs 55m 2s ]
