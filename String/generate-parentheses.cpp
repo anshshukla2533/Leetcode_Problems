@@ -8,10 +8,10 @@ public:
             return ;
         }
         
-          if(op<n){
+          if(op+1<=n){
             solve(n,op+1,cl,ans+'(');
           }
-          if(cl<op){
+          if(cl+1<=op){
            solve(n,op,cl+1,ans+')');
           }
      }
