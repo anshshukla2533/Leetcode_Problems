@@ -5,18 +5,17 @@ public:
        for(auto it:nums){
         mp[it]++;
        }
-       int n=nums.size();
-       vector<vector<int>>bucket(n+1);
-       for(auto [num,count]:mp){
-        bucket[count].push_back(num);
+       vector<int>temp;
+       for(auto it:mp){
+        temp.push_back(it.first);
        }
-       vector<int>ans;
-       for(int i=n;i>=0 && ans.size()<k; i--){
-         for(auto it:bucket[i]){
-            ans.push_back(it);
-            if(ans.size()==k)break;
-         }
-       }
-       return ans;
+       sort(temp.begin(),temp.end(),[&](int a,int b){
+        return mp[a]>mp[b];
+       });
+
+       return vector<int>(temp.begin(), temp.begin() + k);
+
+
+
     }
 };
