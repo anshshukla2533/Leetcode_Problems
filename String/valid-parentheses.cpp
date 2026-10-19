@@ -1,27 +1,33 @@
 class Solution {
 public:
     bool isValid(string s) {
-
-        stack<char>st;
-        
-        for(char it:s){
-            if(it=='(' || it=='{' || it=='['){
-                st.push(it);
-            }else if(it==')'){
-                if(st.empty())return false;
-                if(st.top()!='(')return false;
-                st.pop();
-            }else if(it=='}'){
-                if(st.empty())return false;
-                if(st.top()!='{')return false;
-                st.pop();
-            }else if(it==']'){
-                if(st.empty())return false;
-                if(st.top()!='[')return false;
-                st.pop();
-            }
+     stack<char>st;
+     for(auto it:s){
+        if(st.empty()){
+            st.push(it);
         }
-        return st.empty();
-        return true;
+        else if(it=='(' || it=='{' || it=='['){
+            st.push(it);
+        }else if(it==')' ){
+            if(st.top()=='('){
+                st.pop();
+            }else{
+            return false;
+          }
+        }else if(it=='}'){
+          if(st.top()=='{'){
+            st.pop();
+          }else{
+            return false;
+          }
+        }else if(it==']'){
+          if(st.top()=='['){
+            st.pop();
+          }else{
+            return false;
+          }
+        }
+     }
+     return st.size()==0;
     }
 };
