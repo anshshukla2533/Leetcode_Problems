@@ -2,33 +2,34 @@ class Solution {
 public:
     void reorderList(ListNode* head) {
         if (!head || !head->next) return;
-        
-        vector<ListNode*> temp;
-        ListNode* h = head;
-        while(h) {
-            temp.push_back(h);
-            h = h->next;
+        ListNode* slow=head;
+        ListNode* fast=head;
+        while(fast && fast->next){
+            slow=slow->next;
+            fast=fast->next->next;
         }
-        
-        int n = temp.size();
-        int i = 1;      // Start from 1 because temp[0] is already the head
-        int j = n - 1;
-        
-        ListNode* curr = head;
-        
-        while(i <= j) {
-            curr->next = temp[j];
-            curr = curr->next;
-            j--;
-            
-            if (i > j) break;
-            
-            curr->next = temp[i];
-            curr = curr->next;
-            i++;
+      
+        ListNode* prev=NULL;
+        ListNode* curr=slow->next;
+          slow->next = nullptr;
+        while(curr){
+            ListNode* nxt=curr->next;
+            curr->next=prev;
+            prev=curr;
+            curr=nxt;
         }
-        
-        // Terminate the list properly
-        curr->next = nullptr;
+        ListNode* first=head;
+        ListNode* second=prev;
+        while(second){
+            ListNode* temp1=first->next;
+            ListNode* temp2=second->next;
+            first->next=second;
+            second->next=temp1;
+
+            first=temp1;
+            second=temp2;
+        }
+      //  return head;
+
     }
 };
