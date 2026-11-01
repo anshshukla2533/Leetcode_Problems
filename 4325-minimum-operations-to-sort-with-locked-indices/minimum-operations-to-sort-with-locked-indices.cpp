@@ -11,7 +11,7 @@ public:
         int op = 0;
 
         while (!isort(nums)) {
-            bool swapped = false;
+          //  bool swapped = false;
 
             for (int i = 0; i < nums.size() - 1; i++) {
                 if (nums[i] > nums[i + 1]) {
@@ -32,11 +32,11 @@ public:
 
                     swap(nums[i], nums[i + 1]);
                     op++;
-                    swapped = true;
+                   // swapped = true;
                 }
             }
 
-            if (!swapped) break;
+           // if (!swapped) break;
         }
 
         return op;
