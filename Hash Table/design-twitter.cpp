@@ -6,9 +6,8 @@
 class Twitter {
 private:
     int time;
-    // Map from userId to a list of pairs: {timestamp, tweetId}
-    std::unordered_map<int, std::vector<std::pair<int, int>>> tweets;
-    // Map from userId to a set of userIds they follow
+   
+  unordered_map<int, std::vector<std::pair<int, int>>> tweets;
     std::unordered_map<int, std::unordered_set<int>> following;
 
 public:
