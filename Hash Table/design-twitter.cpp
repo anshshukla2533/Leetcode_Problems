@@ -7,8 +7,8 @@ class Twitter {
 private:
     int time;
    
-  unordered_map<int, std::vector<std::pair<int, int>>> tweets;
-    std::unordered_map<int, std::unordered_set<int>> following;
+  unordered_map<int,vector<pair<int, int>>> tweets;
+  unordered_map<int,unordered_set<int>> following;
 
 public:
     Twitter() {
