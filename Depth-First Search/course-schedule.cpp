@@ -1,39 +1,33 @@
 class Solution {
 public:
-    bool dfs(int node, vector<vector<int>>& adj, vector<int>& state) {
-
-        state[node] = 1; 
-
-        for (int nei : adj[node]) {
-
-            if (state[nei] == 1)
-                return true;         
-            if (state[nei] == 0) {
-                if (dfs(nei, adj, state))
-                    return true;
-            }
-        }
-
-        state[node] = 2; 
-        return false;
+    bool dfs(vector<vector<int>>&adj,vector<vector<int>>& prerequisites,int node,vector<bool>&vis,vector<bool>&pathvis){
+   vis[node]=true;
+   pathvis[node]=true;
+     for(auto ne:adj[node]){
+        if(!vis[ne] && ne!=node){
+            if(dfs(adj,prerequisites,ne,vis,pathvis))return true;
+        }else if(pathvis[ne])return true;
+     }
+     pathvis[node]=false;
+     return false;
     }
-
     bool canFinish(int numCourses, vector<vector<int>>& prerequisites) {
-
-        vector<vector<int>> adj(numCourses);
-
-        for (auto &e : prerequisites)
-            adj[e[1]].push_back(e[0]);
-
-        vector<int> state(numCourses, 0);
-
-        for (int i = 0; i < numCourses; i++) {
-            if (state[i] == 0) {
-                if (dfs(i, adj, state))
-                    return false;
-            }
+        
+        vector<vector<int>>adj(numCourses);
+        vector<bool>vis(numCourses,false);
+          vector<bool>pathvis(numCourses,false);
+        for(auto it:prerequisites){
+            int u=it[0];
+            int v=it[1];
+            adj[u].push_back(v);
         }
-
+        for(int i=0;i<numCourses;i++){
+        if(!vis[i]){
+        if(dfs(adj,prerequisites,i,vis,pathvis))return false;
+        }
+        }
         return true;
+
+
     }
 };
