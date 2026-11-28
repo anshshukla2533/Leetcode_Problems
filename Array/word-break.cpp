@@ -20,9 +20,28 @@ public:
         for (auto& it : wordDict) {
             maxlen = max(maxlen, (int)it.size());
         }
-        int dp[10001];
-        memset(dp,-1,sizeof(dp));
+       // int dp[10001];
+        //memset(dp,-1,sizeof(dp));
         unordered_set<string>st(wordDict.begin(),wordDict.end());
-        return solve(0,s,st,dp);
+
+        int n = s.size();
+
+        vector<bool> dp(n + 1, false);
+
+        dp[0] = true;
+
+        for (int i = 1; i <= n; i++) {
+
+            for (int j = 0; j < i; j++) {
+
+                if (dp[j] && st.count(s.substr(j, i - j))) {
+                    dp[i] = true;
+                    break;
+                }
+            }
+        }
+
+        return dp[n];
+      //  return solve(0,s,st,dp);
     }
 };
